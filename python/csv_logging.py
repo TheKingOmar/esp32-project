@@ -4,9 +4,14 @@ from datetime import datetime
 import time
 class Logger:
     def __init__(self, port, baudrate,timeout=1):
-        self.serial_port = ser.Serial(port, baudrate, timeout=timeout)
-        time.sleep(2)
-
+        try:
+           self.serial_port = ser.Serial(port, baudrate, timeout=timeout)
+           time.sleep(2)
+        except Exception as e:
+           print(f"Error opening serial port: {e}")
+           raise
+        finally:
+              pass
     def read(self):
         return self.serial_port.readline().decode(errors="ignore").strip()
     def parse(self, data):
