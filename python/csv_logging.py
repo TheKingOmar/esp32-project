@@ -33,6 +33,11 @@ class Logger:
                         value = int(value)
                     except ValueError:
                         value = None
+                elif key == 'dist':
+                    try:
+                        value = float(value)
+                    except ValueError:
+                        value = None
                 
                 parsed_data[key] = value
         if not parsed_data:
@@ -40,12 +45,12 @@ class Logger:
         return parsed_data
     def csv_init(self, filename='log.csv'):
         self.file = open(filename, mode='a', newline='', encoding='utf-8')
-        self.writer = csv.DictWriter(self.file, fieldnames=['timestamp', 'temp', 'hum', 'light'])
+        self.writer = csv.DictWriter(self.file, fieldnames=['timestamp', 'temp', 'hum', 'light','dist'])
         if self.file.tell() == 0:
            self.writer.writeheader()
     def csv_log(self, data):
         timestamp = datetime.now().isoformat()
-        row = {'timestamp': timestamp, 'temp': data.get('temp'), 'hum': data.get('hum'), 'light': data.get('light')}
+        row = {'timestamp': timestamp, 'temp': data.get('temp'), 'hum': data.get('hum'), 'light': data.get('light'), 'dist':data.get('dist')}
         self.writer.writerow(row)
         self.file.flush()
     def close(self):
@@ -53,7 +58,7 @@ class Logger:
             self.serial_port.close()
         if hasattr(self, 'file') and not self.file.closed:
             self.file.close()
-log = Logger('COM5', 115200)
+log = Logger('COM6', 115200)
 log.csv_init()
 try:
   while True:
