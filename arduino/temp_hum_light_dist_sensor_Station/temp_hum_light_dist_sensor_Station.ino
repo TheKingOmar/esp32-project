@@ -25,6 +25,7 @@ float distance = 0;
 float humidity = 0;
 float temperature = 0;
 int lightValue = 0;
+bool distValid = false;
 void setup() {
   Serial.begin(115200);
   delay(1000);
@@ -61,7 +62,12 @@ void loop() {
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
   unsigned long echoTime = pulseIn(echoPin, HIGH, 100000);
-  distance = (echoTime * 0.0343) / 2.0;
+  if(echoTime >=25000 || echoTime <= 25){
+    distValid = false;
+  }else {
+    distValid = true;
+    distance = (echoTime * 0.0343) / 2.0;
+  }
   lastDis = currentTime;
   }
   if (currentTime - lastPrint >= intervalPrint){
@@ -91,7 +97,7 @@ void loop() {
   display.println(lightValue);
   Serial.print(",dist=");
   display.print("Dist=");
-  if(isnan(distance) || distance == 0){
+  if(!distValid){
   Serial.println("?");
   display.println("?");
   }else{
