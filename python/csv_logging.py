@@ -33,15 +33,19 @@ class Logger:
             return None
         return parsed_data
     def csv_init(self, fields, filename='log.csv',):
+        self.fields = fields
         self.file = open(filename, mode='a', newline='', encoding='utf-8')
         self.writer = csv.DictWriter(self.file, fieldnames=fields)
         if self.file.tell() == 0:
            self.writer.writeheader()
     def csv_log(self, data):
         timestamp = datetime.now().isoformat()
-        row = {'timestamp': timestamp}
-        for key in list(data.keys()):
-            row[key] = data.get(key)
+        row = {}
+        for key in self.fields:
+            if key == "timestamp":
+                row["timestamp"] = timestamp
+            else:
+                row[key] = data.get(key)
         self.writer.writerow(row)
         self.file.flush()
     def close(self):
