@@ -110,14 +110,27 @@ void loop() {
   if (currentTime - lastPrint >= intervalPrint){
     display.clearDisplay();
     display.setCursor(0, 0);
-    Serial.print("Dist=");
-    display.print("Dist=");
+    Serial.print("dist=");
+    display.print("Dist= ");
     if(!distValid){
-      Serial.println("?");
+      Serial.print("?");
       display.println("?");
     }else{
       Serial.println(distance , 1);
       display.println(distance , 1);
+    }
+    Serial.print(",angle=");
+    Serial.print(angle);
+    display.print("Angle= ");
+    display.println(angle);
+    Serial.print(",mode=");
+    display.print("Mode=");
+    if(autoRotation){
+      Serial.println("auto");
+      display.println("Auto");
+    }else {
+      Serial.println("manual");
+      display.println("Manual");
     }
     display.display();
     lastPrint = currentTime;
@@ -129,5 +142,7 @@ void loop() {
     } else if (distValid && distance >= 8){
       digitalWrite(buzzPin, LOW);
     }
+    lastBuzz = currentTime;
   }
+  
 }

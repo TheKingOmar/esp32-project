@@ -23,34 +23,25 @@ class Logger:
                 value = value.strip()
                 if value =='?':
                     value = None
-                elif key in ('temp' , 'hum'):
+                else:
                     try:
                         value = float(value)
                     except ValueError:
-                        value = None
-                elif key == 'light':
-                    try:
-                        value = int(value)
-                    except ValueError:
-                        value = None
-                elif key == 'dist':
-                    try:
-                        value = float(value)
-                    except ValueError:
-                        value = None
-                
+                        value = value
                 parsed_data[key] = value
         if not parsed_data:
             return None
         return parsed_data
-    def csv_init(self, filename='log.csv'):
+    def csv_init(self, fields, filename='log.csv',):
         self.file = open(filename, mode='a', newline='', encoding='utf-8')
-        self.writer = csv.DictWriter(self.file, fieldnames=['timestamp', 'temp', 'hum', 'light','dist'])
+        self.writer = csv.DictWriter(self.file, fieldnames=fields)
         if self.file.tell() == 0:
            self.writer.writeheader()
     def csv_log(self, data):
         timestamp = datetime.now().isoformat()
-        row = {'timestamp': timestamp, 'temp': data.get('temp'), 'hum': data.get('hum'), 'light': data.get('light'), 'dist':data.get('dist')}
+        row = {'timestamp': timestamp}
+        for key in list(data.keys()):
+            row[key] = data.get(key)
         self.writer.writerow(row)
         self.file.flush()
     def close(self):
@@ -59,7 +50,9 @@ class Logger:
         if hasattr(self, 'file') and not self.file.closed:
             self.file.close()
 log = Logger('COM6', 115200)
-log.csv_init()
+fields1 = ['timestamp', 'temp', 'hum', 'light','dist']
+fields2 = ['timestamp', 'dist', 'angle', 'mode']
+log.csv_init(fields2)
 try:
   while True:
     data = log.read()
